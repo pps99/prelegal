@@ -1,0 +1,8 @@
+# Design Partner Agreement
+
+1. <span class="header_2">Design Partner Overview</span>
+    1. <span class="header_3">Product Access.</span>  <span class="keyterms_link">Partner</span> would like to be one of the first users of the Product. During the <span class="keyterms_link">Term</span>, <span class="keyterms_link">Partner</span> will have early access to the Product for its internal business purposes and to give Feedback to <span class="keyterms_link">Provider</span> and participate in the <span class="keyterms_link">Program</span>, so long as <span class="keyterms_link">Partner</span> complies with the terms of this Agreement.
+    2. <span class="header_3">Program and Feedback.</span>  The purpose of the <span class="keyterms_link">Program</span> is for <span class="keyterms_link">Provider</span> to develop, build, and improve the Product for general use by all of <span class="keyterms_link">Provider's</span> customers or users. <span class="keyterms_link">Partner</span> will give Feedback to <span class="keyterms_link">Provider</span> on a mutually agreed schedule and will participate in the <span class="keyterms_link">Program</span>.
+    3. <span class="header_3">Product Improvement.</span>  <span class="keyterms_link">Provider</span> will develop and improve the Product and may use all Feedback and insight about the Product from the <span class="keyterms_link">Program</span> freely without any restriction or obligation. <span class="keyterms_link">Partner</span> will not give any Feedback that <span class="keyterms_link">Provider</span> cannot use in this manner or for the purpose.
+
+Common Paper Design Partner Agreement Standard Terms, free to use under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
