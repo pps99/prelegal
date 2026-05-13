@@ -1,0 +1,114 @@
+# ============================================================
+# Python / FastAPI
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+.installed.cfg
+lib/
+lib64/
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# pytest
+.pytest_cache/
+.cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# mypy / type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Ruff / linters
+.ruff_cache/
+
+# ============================================================
+# Angular 18 / Node.js
+# ============================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Angular build output
+dist/
+.angular/
+.nx/cache
+
+# Angular cache
+.angular/cache/
+
+# Environment files (Angular)
+src/environments/environment.ts
+src/environments/environment.*.ts
+!src/environments/environment.example.ts
+
+# ============================================================
+# IDEs & Editors
+# ============================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Docker
+# ============================================================
+.dockerignore
+docker-compose.override.yml
+
+# ============================================================
+# Databases / local state
+# ============================================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+logs/
+
+# ============================================================
+# OS
+# ============================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Desktop.ini
+ehthumbs.db
