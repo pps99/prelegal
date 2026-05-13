@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Mutual Non-Disclosure Agreement",
+    "description": "Standard terms for a mutual NDA between two parties sharing confidential information.",
+    "filename": "Mutual-NDA.md"
+  },
+  {
+    "name": "Mutual NDA Cover Page",
+    "description": "Cover page template for the Mutual NDA, used to fill in party details, purpose, term, and key customisation fields.",
+    "filename": "Mutual-NDA-coverpage.md"
+  },
+  {
+    "name": "Cloud Service Agreement",
+    "description": "Standard agreement for cloud software-as-a-service subscriptions, covering access rights, support, payment, confidentiality, and liability.",
+    "filename": "CSA.md"
+  },
+  {
+    "name": "Design Partner Agreement",
+    "description": "Agreement for early product access in exchange for feedback and participation in a design partner program.",
+    "filename": "design-partner-agreement.md"
+  },
+  {
+    "name": "Service Level Agreement",
+    "description": "Standard SLA terms defining uptime targets, response times, service credits, and remedies for cloud services.",
+    "filename": "sla.md"
+  },
+  {
+    "name": "Professional Services Agreement",
+    "description": "Standard agreement for professional services engagements, covering deliverables, IP ownership, payment, and confidentiality.",
+    "filename": "psa.md"
+  },
+  {
+    "name": "Data Processing Agreement",
+    "description": "GDPR-compliant data processing agreement covering processor and subprocessor relationships, restricted transfers (EEA SCCs, UK Addendum), security incident response, and audit rights.",
+    "filename": "DPA.md"
+  },
+  {
+    "name": "Software License Agreement",
+    "description": "Standard agreement for on-premise or self-hosted software licensing, covering installation rights, restrictions, updates, and warranties.",
+    "filename": "Software-License-Agreement.md"
+  },
+  {
+    "name": "Partnership Agreement",
+    "description": "Standard partnership agreement covering co-marketing obligations, trademark licensing, payment terms, and mutual obligations between a company and a partner.",
+    "filename": "Partnership-Agreement.md"
+  },
+  {
+    "name": "Pilot Agreement",
+    "description": "Agreement for a time-limited trial or pilot of a product, granting limited evaluation access rights with confidentiality protections.",
+    "filename": "Pilot-Agreement.md"
+  },
+  {
+    "name": "Business Associate Agreement",
+    "description": "HIPAA-compliant business associate agreement covering PHI handling obligations, security safeguards, breach notification, and subcontractor requirements.",
+    "filename": "BAA.md"
+  },
+  {
+    "name": "AI Addendum",
+    "description": "Addendum to a software agreement covering AI services usage, model training restrictions, input and output ownership, and AI-specific disclaimers.",
+    "filename": "AI-Addendum.md"
+  }
+]
