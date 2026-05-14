@@ -1,3 +1,17 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.component').then(m => m.LoginComponent),
+  },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/nda/nda-page.component').then(m => m.NdaPageComponent),
+    canActivate: [authGuard],
+  },
+  { path: '**', redirectTo: '' },
+];

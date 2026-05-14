@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <span class="logo-mark"></span>
+      <span class="logo-text">prelegal</span>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to continue to your workspace</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label for="email">Email address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@company.com"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (error) {
+        <div class="error-banner">{{ error }}</div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (loading) { Signing in… } @else { Sign in }
+      </button>
+    </form>
+  </div>
+</div>
