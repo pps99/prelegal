@@ -8,7 +8,7 @@ The available documents are covered in the catalog.json file in the project root
 
 @catalog.json
 
-The current implementation has a fake login screen (any credentials accepted) that leads into the Mutual NDA form. AI chat, real authentication, and document persistence are not yet implemented.
+The current implementation has a fake login screen (any credentials accepted) that leads into an AI chat interface for the Mutual NDA. The AI collects all required fields through conversation and generates the final document. Real authentication and document persistence are not yet implemented.
 
 ## Development process
 
@@ -68,3 +68,11 @@ Static Angular 18 form for the Mutual NDA only. No backend, no routing, no AI.
 - **Docker**: Multi-stage `Dockerfile` (Node 20 → Python 3.12) + `docker-compose.yml`.
 - **Scripts**: `scripts/start-{mac,linux}.sh`, `scripts/stop-{mac,linux}.sh`, `scripts/start/stop-windows.ps1` — all Docker-based.
 - **Not yet implemented**: real authentication, AI chat, multi-document support, document persistence.
+
+### PL-5 — AI chat interface for Mutual NDA (complete)
+- **Backend**: New `chat_sessions` SQLite table (id, messages JSON, created_at). Three endpoints under `/api/chat`: `POST /sessions` (creates session, returns greeting), `POST /sessions/{id}/messages` (single LiteLLM call returning `{message, partial_nda_data}` via JSON Schema structured outputs), `POST /sessions/{id}/generate` (produces final complete NDA data object with defaults applied).
+- **LLM**: LiteLLM with OpenRouter model `openrouter/openai/gpt-oss-120b:free`, Cerebras preferred provider via `extra_body` routing. `load_dotenv()` called in `main.py`; `OPENROUTER_API_KEY` injected via `env_file` in `docker-compose.yml`.
+- **Frontend**: `NdaChatComponent` replaces the old static `NdaFormComponent`. Two-pane layout — chat on the left, live `NdaPreviewComponent` sidebar on the right that updates as partial data accumulates. "Generate Document" triggers the generate endpoint and emits `formSubmitted` to `NdaPageComponent`. `NdaPreviewComponent` gains `@Input() showActions` to hide toolbar in sidebar context.
+- **Services**: New `ChatService` (`frontend/src/app/services/chat.service.ts`) with `createSession`, `sendMessage`, `generateDocument` methods.
+- **Tests**: 8 pytest backend tests (session creation, message persistence, generate, 404 cases); 72 Angular Karma/Jasmine tests (12 `NdaChatComponent`, 3 `ChatService`, 5 `NdaPageComponent`, others unchanged).
+- **Not yet implemented**: real authentication, multi-document support, document persistence.
