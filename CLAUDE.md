@@ -8,7 +8,7 @@ The available documents are covered in the catalog.json file in the project root
 
 @catalog.json
 
-The current implementation supports all 11 document types via AI chat with full user authentication and document persistence.
+The current implementation has a fake login screen (any credentials accepted) that leads into the Mutual NDA form. AI chat, real authentication, and document persistence are not yet implemented.
 
 ## Development process
 
@@ -31,7 +31,7 @@ Do not use paid models.
 The entire project should be packaged into a Docker container.  
 The backend should be in backend/ and be a uv project, using FastAPI.  
 The frontend should be in frontend/  
-The database should use SQLLite and be created from scratch each time the Docker container is brought up, allowing for a users table with sign up and sign in.  
+The database uses SQLite and is created from scratch each time the Docker container is brought up. It has a `users` table (email, created_at). Sign-up and sign-in with real password validation are not yet implemented.  
 Consider statically building the frontend and serving it via FastAPI, if that will work.  
 There should be scripts in scripts/ for:  
 ```bash
@@ -55,3 +55,16 @@ Backend available at http://localhost:8000
 - Purple Secondary: `#753991` (submit buttons)
 - Dark Navy: `#032147` (headings)
 - Gray Text: `#888888`
+
+## Implementation status
+
+### PL-3 — Mutual NDA creator prototype
+Static Angular 18 form for the Mutual NDA only. No backend, no routing, no AI.
+
+### PL-4 — V1 technical foundation (complete)
+- **Backend**: `backend/` — FastAPI uv project, `POST /api/auth/login` (fake, any credentials succeed), `GET /api/health`, SQLite DB with `users` table recreated on each container start.
+- **Frontend**: Angular routing added. `/login` → `LoginComponent`, `/` → `NdaPageComponent` (Mutual NDA form) behind an auth guard. Token stored in `localStorage`.
+- **Static serving**: Angular is built and served by FastAPI via a catch-all SPA route.
+- **Docker**: Multi-stage `Dockerfile` (Node 20 → Python 3.12) + `docker-compose.yml`.
+- **Scripts**: `scripts/start-{mac,linux}.sh`, `scripts/stop-{mac,linux}.sh`, `scripts/start/stop-windows.ps1` — all Docker-based.
+- **Not yet implemented**: real authentication, AI chat, multi-document support, document persistence.
