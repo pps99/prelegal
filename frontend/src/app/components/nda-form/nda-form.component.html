@@ -1,0 +1,242 @@
+<div class="form-container">
+  <div class="form-header">
+    <div class="logo">
+      <span class="logo-icon">⚖️</span>
+      <span class="logo-text">PreLegal</span>
+    </div>
+    <h1>Mutual Non-Disclosure Agreement</h1>
+    <p class="subtitle">Fill in the details below to generate your Mutual NDA</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <!-- Agreement Details -->
+    <section class="form-section">
+      <h2>Agreement Details</h2>
+
+      <div class="form-group">
+        <label for="purpose">Purpose <span class="required">*</span></label>
+        <textarea
+          id="purpose"
+          formControlName="purpose"
+          rows="3"
+          placeholder="How Confidential Information may be used"
+          [class.invalid]="isInvalid('purpose')"
+        ></textarea>
+        @if (isInvalid('purpose')) { <span class="error-msg">Purpose is required</span> }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="effectiveDate">Effective Date <span class="required">*</span></label>
+          <input
+            id="effectiveDate"
+            type="date"
+            formControlName="effectiveDate"
+            [class.invalid]="isInvalid('effectiveDate')"
+          />
+          @if (isInvalid('effectiveDate')) { <span class="error-msg">Effective date is required</span> }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>MNDA Term</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" formControlName="mndaTerm" value="one_year" />
+            <span>Expires after</span>
+            <input
+              type="number"
+              formControlName="mndaTermYears"
+              min="1"
+              class="inline-number"
+              [class.disabled-input]="mndaTermYearsDisabled"
+            />
+            <span>year(s) from Effective Date</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" formControlName="mndaTerm" value="until_terminated" />
+            <span>Continues until terminated in accordance with the terms of the MNDA</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Term of Confidentiality</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" formControlName="termOfConfidentiality" value="one_year" />
+            <span>Lasts for</span>
+            <input
+              type="number"
+              formControlName="confidentialityYears"
+              min="1"
+              class="inline-number"
+              [class.disabled-input]="confidentialityYearsDisabled"
+            />
+            <span>year(s) from Effective Date (except trade secrets until no longer a trade secret)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" formControlName="termOfConfidentiality" value="in_perpetuity" />
+            <span>In perpetuity</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="governingLaw">Governing Law (State) <span class="required">*</span></label>
+          <input
+            id="governingLaw"
+            type="text"
+            formControlName="governingLaw"
+            placeholder="e.g. Delaware"
+            [class.invalid]="isInvalid('governingLaw')"
+          />
+          @if (isInvalid('governingLaw')) { <span class="error-msg">Governing law is required</span> }
+        </div>
+        <div class="form-group">
+          <label for="jurisdiction">Jurisdiction <span class="required">*</span></label>
+          <input
+            id="jurisdiction"
+            type="text"
+            formControlName="jurisdiction"
+            placeholder="e.g. New Castle, DE"
+            [class.invalid]="isInvalid('jurisdiction')"
+          />
+          @if (isInvalid('jurisdiction')) { <span class="error-msg">Jurisdiction is required</span> }
+        </div>
+      </div>
+    </section>
+
+    <!-- Party 1 -->
+    <section class="form-section" formGroupName="party1">
+      <h2>Party 1</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="p1CompanyName">Company Name <span class="required">*</span></label>
+          <input
+            id="p1CompanyName"
+            type="text"
+            formControlName="companyName"
+            placeholder="Acme Corp"
+            [class.invalid]="isInvalid('party1.companyName')"
+          />
+          @if (isInvalid('party1.companyName')) { <span class="error-msg">Company name is required</span> }
+        </div>
+        <div class="form-group">
+          <label for="p1ContactName">Contact Name <span class="required">*</span></label>
+          <input
+            id="p1ContactName"
+            type="text"
+            formControlName="contactName"
+            placeholder="Jane Doe"
+            [class.invalid]="isInvalid('party1.contactName')"
+          />
+          @if (isInvalid('party1.contactName')) { <span class="error-msg">Contact name is required</span> }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="p1Title">Title <span class="required">*</span></label>
+          <input
+            id="p1Title"
+            type="text"
+            formControlName="title"
+            placeholder="CEO"
+            [class.invalid]="isInvalid('party1.title')"
+          />
+          @if (isInvalid('party1.title')) { <span class="error-msg">Title is required</span> }
+        </div>
+        <div class="form-group">
+          <label for="p1SignatureDate">Signature Date <span class="required">*</span></label>
+          <input
+            id="p1SignatureDate"
+            type="date"
+            formControlName="signatureDate"
+            [class.invalid]="isInvalid('party1.signatureDate')"
+          />
+          @if (isInvalid('party1.signatureDate')) { <span class="error-msg">Signature date is required</span> }
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="p1NoticeAddress">Notice Address <span class="required">*</span></label>
+        <textarea
+          id="p1NoticeAddress"
+          formControlName="noticeAddress"
+          rows="2"
+          placeholder="123 Main St, Springfield, IL 62701 or email@example.com"
+          [class.invalid]="isInvalid('party1.noticeAddress')"
+        ></textarea>
+        @if (isInvalid('party1.noticeAddress')) { <span class="error-msg">Notice address is required</span> }
+      </div>
+    </section>
+
+    <!-- Party 2 -->
+    <section class="form-section" formGroupName="party2">
+      <h2>Party 2</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="p2CompanyName">Company Name <span class="required">*</span></label>
+          <input
+            id="p2CompanyName"
+            type="text"
+            formControlName="companyName"
+            placeholder="Globex Inc"
+            [class.invalid]="isInvalid('party2.companyName')"
+          />
+          @if (isInvalid('party2.companyName')) { <span class="error-msg">Company name is required</span> }
+        </div>
+        <div class="form-group">
+          <label for="p2ContactName">Contact Name <span class="required">*</span></label>
+          <input
+            id="p2ContactName"
+            type="text"
+            formControlName="contactName"
+            placeholder="John Smith"
+            [class.invalid]="isInvalid('party2.contactName')"
+          />
+          @if (isInvalid('party2.contactName')) { <span class="error-msg">Contact name is required</span> }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="p2Title">Title <span class="required">*</span></label>
+          <input
+            id="p2Title"
+            type="text"
+            formControlName="title"
+            placeholder="CTO"
+            [class.invalid]="isInvalid('party2.title')"
+          />
+          @if (isInvalid('party2.title')) { <span class="error-msg">Title is required</span> }
+        </div>
+        <div class="form-group">
+          <label for="p2SignatureDate">Signature Date <span class="required">*</span></label>
+          <input
+            id="p2SignatureDate"
+            type="date"
+            formControlName="signatureDate"
+            [class.invalid]="isInvalid('party2.signatureDate')"
+          />
+          @if (isInvalid('party2.signatureDate')) { <span class="error-msg">Signature date is required</span> }
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="p2NoticeAddress">Notice Address <span class="required">*</span></label>
+        <textarea
+          id="p2NoticeAddress"
+          formControlName="noticeAddress"
+          rows="2"
+          placeholder="456 Oak Ave, Springfield, IL 62702 or email@example.com"
+          [class.invalid]="isInvalid('party2.noticeAddress')"
+        ></textarea>
+        @if (isInvalid('party2.noticeAddress')) { <span class="error-msg">Notice address is required</span> }
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Preview NDA →</button>
+    </div>
+  </form>
+</div>

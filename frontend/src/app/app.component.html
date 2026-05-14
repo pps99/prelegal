@@ -1,0 +1,5 @@
+@if (!ndaData) {
+  <app-nda-form (formSubmitted)="onFormSubmitted($event)"></app-nda-form>
+} @else {
+  <app-nda-preview [data]="ndaData" (editRequested)="onEditRequested()"></app-nda-preview>
+}

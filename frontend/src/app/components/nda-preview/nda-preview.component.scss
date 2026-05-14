@@ -1,0 +1,249 @@
+.preview-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+}
+
+/* ---- Toolbar ---- */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #4f46e5;
+  }
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+}
+
+/* ---- Document ---- */
+.document {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 3rem 3.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #1f2937;
+
+  @media (max-width: 600px) {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+/* ---- Cover Page ---- */
+.cover-page {
+  .doc-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cover-intro {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: #374151;
+    font-family: inherit;
+  }
+}
+
+.cover-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 0.75rem 1rem;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th {
+    background: #f9fafb;
+    font-weight: 600;
+    width: 180px;
+    color: #374151;
+    font-family: system-ui, sans-serif;
+    font-size: 0.875rem;
+  }
+
+  td {
+    em {
+      color: #6b7280;
+      font-size: 0.8rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+.signing-intro {
+  margin: 1.5rem 0 1rem;
+  font-size: 0.9rem;
+}
+
+.signature-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-family: system-ui, sans-serif;
+  }
+
+  .row-label {
+    background: #f9fafb;
+    font-weight: 500;
+    font-family: system-ui, sans-serif;
+    width: 130px;
+    color: #374151;
+    font-size: 0.8rem;
+  }
+
+  .signature-cell {
+    height: 48px;
+  }
+
+  .address-cell {
+    white-space: pre-wrap;
+  }
+}
+
+/* ---- Page Break ---- */
+.page-break {
+  border: none;
+  border-top: 2px dashed #e5e7eb;
+  margin: 2.5rem 0;
+}
+
+/* ---- Standard Terms ---- */
+.standard-terms {
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+}
+
+.terms-list {
+  padding-left: 1.5rem;
+
+  li {
+    margin-bottom: 1.25rem;
+    text-align: justify;
+  }
+}
+
+.field-ref {
+  background: #ede9fe;
+  border-radius: 3px;
+  padding: 0 3px;
+  color: #5b21b6;
+  font-style: italic;
+}
+
+.cc-attribution {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 2rem;
+  font-family: system-ui, sans-serif;
+
+  a {
+    color: #6366f1;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* ---- Print ---- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .document {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .page-break {
+    border-top: 1px solid #ccc;
+    page-break-after: always;
+  }
+
+  .field-ref {
+    background: none;
+    color: #000;
+    font-style: normal;
+    font-weight: 600;
+  }
+}
