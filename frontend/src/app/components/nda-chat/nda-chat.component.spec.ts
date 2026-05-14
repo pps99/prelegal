@@ -1,43 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
-import { NdaChatComponent } from './nda-chat.component';
-import { ChatService, PartialNdaData } from '../../services/chat.service';
-import { NdaFormData } from '../../models/nda-data.model';
-
-const EMPTY_PARTIAL: PartialNdaData = {
-  party1: { companyName: null, contactName: null, title: null, noticeAddress: null, signatureDate: null },
-  party2: { companyName: null, contactName: null, title: null, noticeAddress: null, signatureDate: null },
-  purpose: null,
-  effectiveDate: null,
-  mndaTerm: null,
-  mndaTermYears: null,
-  termOfConfidentiality: null,
-  confidentialityYears: null,
-  governingLaw: null,
-  jurisdiction: null,
-};
-
-const MOCK_NDA: NdaFormData = {
-  party1: { companyName: 'Acme', contactName: 'Jane', title: 'CEO', noticeAddress: '123 Main', signatureDate: '2026-01-01' },
-  party2: { companyName: 'Globex', contactName: 'John', title: 'CTO', noticeAddress: '456 Oak', signatureDate: '2026-01-01' },
-  purpose: 'Evaluating partnership.',
-  effectiveDate: '2026-01-01',
-  mndaTerm: 'one_year',
-  mndaTermYears: 1,
-  termOfConfidentiality: 'one_year',
-  confidentialityYears: 1,
-  governingLaw: 'Delaware',
-  jurisdiction: 'New Castle, DE',
-};
+import { NdaChatComponent, DocResult } from './nda-chat.component';
+import { ChatService } from '../../services/chat.service';
 
 describe('NdaChatComponent', () => {
   let chatSpy: jasmine.SpyObj<ChatService>;
 
   beforeEach(async () => {
     chatSpy = jasmine.createSpyObj('ChatService', ['createSession', 'sendMessage', 'generateDocument']);
-    chatSpy.createSession.and.returnValue(of({ session_id: 1, greeting: 'Hello! What are the companies?' }));
-    chatSpy.sendMessage.and.returnValue(of({ message: 'Got it! What else?', partial_nda_data: EMPTY_PARTIAL }));
+    chatSpy.createSession.and.returnValue(of({ session_id: 1, greeting: 'Hello! What document do you need?' }));
+    chatSpy.sendMessage.and.returnValue(of({ message: 'Got it! What else?', document_type: null, partial_data: null }));
 
     await TestBed.configureTestingModule({
       imports: [NdaChatComponent, HttpClientTestingModule],
@@ -57,7 +30,7 @@ describe('NdaChatComponent', () => {
     expect(fixture.componentInstance.sessionId).toBe(1);
     expect(fixture.componentInstance.messages[0]).toEqual({
       role: 'assistant',
-      content: 'Hello! What are the companies?',
+      content: 'Hello! What document do you need?',
     });
   });
 
@@ -79,22 +52,31 @@ describe('NdaChatComponent', () => {
   it('should send message and add both user and assistant messages', () => {
     const fixture = TestBed.createComponent(NdaChatComponent);
     fixture.detectChanges();
-    fixture.componentInstance.inputText = 'Acme Corp and Globex';
+    fixture.componentInstance.inputText = 'I need a mutual NDA';
     fixture.componentInstance.sendMessage();
-    expect(chatSpy.sendMessage).toHaveBeenCalledWith(1, 'Acme Corp and Globex');
+    expect(chatSpy.sendMessage).toHaveBeenCalledWith(1, 'I need a mutual NDA');
     expect(fixture.componentInstance.messages.length).toBe(3);
-    expect(fixture.componentInstance.messages[1]).toEqual({ role: 'user', content: 'Acme Corp and Globex' });
+    expect(fixture.componentInstance.messages[1]).toEqual({ role: 'user', content: 'I need a mutual NDA' });
     expect(fixture.componentInstance.messages[2]).toEqual({ role: 'assistant', content: 'Got it! What else?' });
   });
 
+  it('should store documentType when returned by sendMessage', () => {
+    chatSpy.sendMessage.and.returnValue(of({ message: "Great, let's create an NDA.", document_type: 'mutual_nda', partial_data: null }));
+    const fixture = TestBed.createComponent(NdaChatComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.inputText = 'I need an NDA';
+    fixture.componentInstance.sendMessage();
+    expect(fixture.componentInstance.documentType).toBe('mutual_nda');
+  });
+
   it('should update partialData after sendMessage', () => {
-    const partial: PartialNdaData = { ...EMPTY_PARTIAL, party1: { ...EMPTY_PARTIAL.party1, companyName: 'Acme' } };
-    chatSpy.sendMessage.and.returnValue(of({ message: 'Got it.', partial_nda_data: partial }));
+    const partial = { party1: { companyName: 'Acme' }, purpose: null };
+    chatSpy.sendMessage.and.returnValue(of({ message: 'Got it.', document_type: 'mutual_nda', partial_data: partial }));
     const fixture = TestBed.createComponent(NdaChatComponent);
     fixture.detectChanges();
     fixture.componentInstance.inputText = 'Acme Corp';
     fixture.componentInstance.sendMessage();
-    expect(fixture.componentInstance.partialData?.party1?.companyName).toBe('Acme');
+    expect(fixture.componentInstance.partialData).toEqual(partial);
   });
 
   it('should clear inputText after sending', () => {
@@ -105,14 +87,14 @@ describe('NdaChatComponent', () => {
     expect(fixture.componentInstance.inputText).toBe('');
   });
 
-  it('should emit formSubmitted with nda_data when document generated', () => {
-    chatSpy.generateDocument.and.returnValue(of({ nda_data: MOCK_NDA }));
+  it('should emit formSubmitted with renderedHtml and fields when document generated', () => {
+    chatSpy.generateDocument.and.returnValue(of({ rendered_html: '<html>Test</html>', fields: { governingLaw: 'Delaware' } }));
     const fixture = TestBed.createComponent(NdaChatComponent);
     fixture.detectChanges();
-    let emitted: NdaFormData | undefined;
+    let emitted: DocResult | undefined;
     fixture.componentInstance.formSubmitted.subscribe((d) => (emitted = d));
     fixture.componentInstance.generateDocument();
-    expect(emitted).toEqual(MOCK_NDA);
+    expect(emitted).toEqual({ renderedHtml: '<html>Test</html>', fields: { governingLaw: 'Delaware' } });
   });
 
   it('should set error when generateDocument fails', () => {
@@ -124,29 +106,19 @@ describe('NdaChatComponent', () => {
     expect(fixture.componentInstance.generating).toBeFalse();
   });
 
-  describe('previewData getter', () => {
-    it('should return defaults when partialData is null', () => {
+  describe('fieldEntries getter', () => {
+    it('should return empty array when partialData is null', () => {
       const fixture = TestBed.createComponent(NdaChatComponent);
       fixture.detectChanges();
-      const preview = fixture.componentInstance.previewData;
-      expect(preview.mndaTerm).toBe('one_year');
-      expect(preview.mndaTermYears).toBe(1);
-      expect(preview.termOfConfidentiality).toBe('one_year');
-      expect(preview.confidentialityYears).toBe(1);
-      expect(preview.party1.companyName).toBe('');
+      expect(fixture.componentInstance.fieldEntries).toEqual([]);
     });
 
-    it('should use partial values when available', () => {
+    it('should flatten nested partialData into label/value pairs', () => {
       const fixture = TestBed.createComponent(NdaChatComponent);
       fixture.detectChanges();
-      fixture.componentInstance.partialData = {
-        ...EMPTY_PARTIAL,
-        party1: { ...EMPTY_PARTIAL.party1, companyName: 'Acme Corp' },
-        governingLaw: 'Delaware',
-      };
-      const preview = fixture.componentInstance.previewData;
-      expect(preview.party1.companyName).toBe('Acme Corp');
-      expect(preview.governingLaw).toBe('Delaware');
+      fixture.componentInstance.partialData = { governingLaw: 'Delaware', purpose: 'Exploring partnership' };
+      const entries = fixture.componentInstance.fieldEntries;
+      expect(entries.some(e => e.label === 'Governing Law' && e.value === 'Delaware')).toBeTrue();
     });
   });
 });

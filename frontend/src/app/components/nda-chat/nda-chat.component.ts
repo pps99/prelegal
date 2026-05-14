@@ -10,37 +10,55 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ChatService, PartialNdaData, PartialPartyInfo } from '../../services/chat.service';
-import { NdaPreviewComponent } from '../nda-preview/nda-preview.component';
-import { NdaFormData, PartyInfo } from '../../models/nda-data.model';
+import { ChatService } from '../../services/chat.service';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
+export interface DocResult {
+  renderedHtml: string;
+  fields: Record<string, any>;
+}
+
 @Component({
   selector: 'app-nda-chat',
   standalone: true,
-  imports: [FormsModule, NdaPreviewComponent],
+  imports: [FormsModule],
   templateUrl: './nda-chat.component.html',
   styleUrl: './nda-chat.component.scss',
 })
 export class NdaChatComponent implements OnInit {
-  @Output() formSubmitted = new EventEmitter<NdaFormData>();
+  @Output() formSubmitted = new EventEmitter<DocResult>();
   @ViewChild('messagesEl') private messagesEl!: ElementRef<HTMLDivElement>;
+  @ViewChild('inputEl') private inputEl!: ElementRef<HTMLTextAreaElement>;
 
   messages: ChatMessage[] = [];
-  partialData: PartialNdaData | null = null;
+  partialData: Record<string, any> | null = null;
+  documentType: string | null = null;
   inputText = '';
   sessionId: number | null = null;
   loading = false;
   generating = false;
   error: string | null = null;
 
-  private readonly today = new Date().toISOString().split('T')[0];
   private readonly chatService = inject(ChatService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly DOC_NAMES: Record<string, string> = {
+    mutual_nda: 'Mutual NDA',
+    csa: 'Cloud Service Agreement',
+    design_partner: 'Design Partner Agreement',
+    sla: 'Service Level Agreement',
+    psa: 'Professional Services Agreement',
+    dpa: 'Data Processing Agreement',
+    software_license: 'Software License Agreement',
+    partnership: 'Partnership Agreement',
+    pilot: 'Pilot Agreement',
+    baa: 'Business Associate Agreement',
+    ai_addendum: 'AI Addendum',
+  };
 
   ngOnInit(): void {
     this.chatService.createSession().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -55,30 +73,26 @@ export class NdaChatComponent implements OnInit {
     });
   }
 
-  private mapParty(partial: PartialPartyInfo | null | undefined): PartyInfo {
-    return {
-      companyName: partial?.companyName ?? '',
-      contactName: partial?.contactName ?? '',
-      title: partial?.title ?? '',
-      noticeAddress: partial?.noticeAddress ?? '',
-      signatureDate: partial?.signatureDate ?? this.today,
-    };
+  get documentDisplayName(): string {
+    return this.documentType ? (this.DOC_NAMES[this.documentType] ?? this.documentType) : '';
   }
 
-  get previewData(): NdaFormData {
-    const p = this.partialData;
-    return {
-      party1: this.mapParty(p?.party1),
-      party2: this.mapParty(p?.party2),
-      purpose: p?.purpose ?? '',
-      effectiveDate: p?.effectiveDate ?? this.today,
-      mndaTerm: p?.mndaTerm ?? 'one_year',
-      mndaTermYears: p?.mndaTermYears ?? 1,
-      termOfConfidentiality: p?.termOfConfidentiality ?? 'one_year',
-      confidentialityYears: p?.confidentialityYears ?? 1,
-      governingLaw: p?.governingLaw ?? '',
-      jurisdiction: p?.jurisdiction ?? '',
+  get fieldEntries(): Array<{ label: string; value: string }> {
+    if (!this.partialData) return [];
+    const result: Array<{ label: string; value: string }> = [];
+    const process = (obj: Record<string, any>, prefix: string) => {
+      for (const [key, val] of Object.entries(obj)) {
+        if (val === null || val === undefined || val === '') continue;
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
+        if (typeof val === 'object' && !Array.isArray(val)) {
+          process(val as Record<string, any>, label);
+        } else {
+          result.push({ label: prefix ? `${prefix} › ${label}` : label, value: String(val) });
+        }
+      }
     };
+    process(this.partialData, '');
+    return result;
   }
 
   sendMessage(): void {
@@ -94,13 +108,16 @@ export class NdaChatComponent implements OnInit {
     this.chatService.sendMessage(this.sessionId, content).subscribe({
       next: (res) => {
         this.messages.push({ role: 'assistant', content: res.message });
-        this.partialData = res.partial_nda_data;
+        this.documentType = res.document_type;
+        this.partialData = res.partial_data;
         this.loading = false;
         this.scrollToBottom();
+        this.inputEl?.nativeElement.focus();
       },
       error: () => {
         this.error = 'Failed to get a response. Please try again.';
         this.loading = false;
+        this.inputEl?.nativeElement.focus();
       },
     });
   }
@@ -120,7 +137,7 @@ export class NdaChatComponent implements OnInit {
     this.chatService.generateDocument(this.sessionId).subscribe({
       next: (res) => {
         this.generating = false;
-        this.formSubmitted.emit(res.nda_data);
+        this.formSubmitted.emit({ renderedHtml: res.rendered_html, fields: res.fields });
       },
       error: () => {
         this.error = 'Failed to generate document. Please try again.';
@@ -132,8 +149,7 @@ export class NdaChatComponent implements OnInit {
   private scrollToBottom(): void {
     setTimeout(() => {
       if (this.messagesEl) {
-        this.messagesEl.nativeElement.scrollTop =
-          this.messagesEl.nativeElement.scrollHeight;
+        this.messagesEl.nativeElement.scrollTop = this.messagesEl.nativeElement.scrollHeight;
       }
     }, 0);
   }

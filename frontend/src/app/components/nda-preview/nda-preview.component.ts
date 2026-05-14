@@ -1,7 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NdaFormData } from '../../models/nda-data.model';
-import { mndaTermLabel, confidentialityTermLabel, formatNdaDate } from '../../models/nda-labels';
-import { NdaDownloadService } from '../../services/nda-download.service';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-nda-preview',
@@ -11,33 +9,26 @@ import { NdaDownloadService } from '../../services/nda-download.service';
   styleUrl: './nda-preview.component.scss',
 })
 export class NdaPreviewComponent {
-  @Input() data!: NdaFormData;
+  @Input() renderedHtml = '';
   @Input() showActions = true;
   @Output() editRequested = new EventEmitter<void>();
 
-  constructor(private downloadService: NdaDownloadService) {}
+  private readonly sanitizer = inject(DomSanitizer);
 
-  get mndaTermLabel(): string {
-    return mndaTermLabel(this.data);
-  }
-
-  get confidentialityTermLabel(): string {
-    return confidentialityTermLabel(this.data);
-  }
-
-  formatDate(dateStr: string): string {
-    return formatNdaDate(dateStr);
+  get safeHtml(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.renderedHtml);
   }
 
   onEdit(): void {
     this.editRequested.emit();
   }
 
-  onDownload(): void {
-    this.downloadService.downloadAsHtml(this.data);
-  }
-
-  onPrint(): void {
-    window.print();
+  onDownloadPdf(): void {
+    const win = window.open('', '_blank');
+    if (!win) return;
+    win.document.write(this.renderedHtml);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 250);
   }
 }

@@ -10,6 +10,7 @@ dependencies = [
     "python-multipart>=0.0.12",
     "litellm>=1.40.0",
     "python-dotenv>=1.0.0",
+    "Markdown>=3.0.0",
 ]
 
 [tool.uv]

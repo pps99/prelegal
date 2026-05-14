@@ -4,19 +4,11 @@ import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { NdaPageComponent } from './nda-page.component';
 import { ChatService } from '../../services/chat.service';
-import { NdaFormData } from '../../models/nda-data.model';
+import { DocResult } from '../../components/nda-chat/nda-chat.component';
 
-const FULL_NDA_DATA: NdaFormData = {
-  party1: { companyName: 'Acme Corp', contactName: 'Jane Doe', title: 'CEO', noticeAddress: '123 Main St', signatureDate: '2025-01-01' },
-  party2: { companyName: 'Globex Inc', contactName: 'John Smith', title: 'CTO', noticeAddress: '456 Oak Ave', signatureDate: '2025-01-01' },
-  purpose: 'Evaluating a partnership.',
-  effectiveDate: '2025-01-01',
-  mndaTerm: 'one_year',
-  mndaTermYears: 1,
-  termOfConfidentiality: 'one_year',
-  confidentialityYears: 1,
-  governingLaw: 'Delaware',
-  jurisdiction: 'New Castle, DE',
+const FULL_DOC_RESULT: DocResult = {
+  renderedHtml: '<h1>Mutual NDA</h1><p>Acme Corp and Globex Inc</p>',
+  fields: { governingLaw: 'Delaware', party1: { companyName: 'Acme Corp' } },
 };
 
 describe('NdaPageComponent', () => {
@@ -37,35 +29,34 @@ describe('NdaPageComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should start with ndaData as null', () => {
+  it('should start with docResult as null', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
-    expect(fixture.componentInstance.ndaData).toBeNull();
+    expect(fixture.componentInstance.docResult).toBeNull();
   });
 
   it('should show the chat component initially', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeTruthy();
-    expect(fixture.componentInstance.ndaData).toBeNull();
   });
 
   it('should show preview and hide chat after formSubmitted', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
-    fixture.componentInstance.onFormSubmitted(FULL_NDA_DATA);
+    fixture.componentInstance.onFormSubmitted(FULL_DOC_RESULT);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeNull();
-    expect(fixture.componentInstance.ndaData).toEqual(FULL_NDA_DATA);
+    expect(fixture.debugElement.query(By.css('app-nda-preview'))).toBeTruthy();
   });
 
   it('should return to chat after editRequested', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
-    fixture.componentInstance.onFormSubmitted(FULL_NDA_DATA);
+    fixture.componentInstance.onFormSubmitted(FULL_DOC_RESULT);
     fixture.detectChanges();
     fixture.componentInstance.onEditRequested();
     fixture.detectChanges();
-    expect(fixture.componentInstance.ndaData).toBeNull();
+    expect(fixture.componentInstance.docResult).toBeNull();
     expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeTruthy();
   });
 });

@@ -1,20 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ChatService } from './chat.service';
-import { NdaFormData } from '../models/nda-data.model';
-
-const MOCK_NDA_DATA: NdaFormData = {
-  party1: { companyName: 'Acme', contactName: 'Jane', title: 'CEO', noticeAddress: '123 Main', signatureDate: '2026-01-01' },
-  party2: { companyName: 'Globex', contactName: 'John', title: 'CTO', noticeAddress: '456 Oak', signatureDate: '2026-01-01' },
-  purpose: 'Evaluating partnership.',
-  effectiveDate: '2026-01-01',
-  mndaTerm: 'one_year',
-  mndaTermYears: 1,
-  termOfConfidentiality: 'one_year',
-  confidentialityYears: 1,
-  governingLaw: 'Delaware',
-  jurisdiction: 'New Castle, DE',
-};
 
 describe('ChatService', () => {
   let service: ChatService;
@@ -53,24 +39,27 @@ describe('ChatService', () => {
     it('should POST to the correct session URL with message content', () => {
       service.sendMessage(42, 'test message').subscribe((res) => {
         expect(res.message).toBe('AI response');
+        expect(res.document_type).toBeNull();
+        expect(res.partial_data).toBeNull();
       });
 
       const req = httpMock.expectOne('/api/chat/sessions/42/messages');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ content: 'test message' });
-      req.flush({ message: 'AI response', partial_nda_data: {} });
+      req.flush({ message: 'AI response', document_type: null, partial_data: null });
     });
   });
 
   describe('generateDocument()', () => {
-    it('should POST to the generate URL', () => {
+    it('should POST to the generate URL and return fields and rendered_html', () => {
       service.generateDocument(42).subscribe((res) => {
-        expect(res.nda_data).toEqual(MOCK_NDA_DATA);
+        expect(res.rendered_html).toBe('<html>doc</html>');
+        expect(res.fields['governingLaw']).toBe('Delaware');
       });
 
       const req = httpMock.expectOne('/api/chat/sessions/42/generate');
       expect(req.request.method).toBe('POST');
-      req.flush({ nda_data: MOCK_NDA_DATA });
+      req.flush({ rendered_html: '<html>doc</html>', fields: { governingLaw: 'Delaware' } });
     });
   });
 });

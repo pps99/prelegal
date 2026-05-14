@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { NdaChatComponent } from '../../components/nda-chat/nda-chat.component';
+import { NdaChatComponent, DocResult } from '../../components/nda-chat/nda-chat.component';
 import { NdaPreviewComponent } from '../../components/nda-preview/nda-preview.component';
-import { NdaFormData } from '../../models/nda-data.model';
 
 @Component({
   selector: 'app-nda-page',
@@ -11,15 +10,15 @@ import { NdaFormData } from '../../models/nda-data.model';
   styleUrl: './nda-page.component.scss',
 })
 export class NdaPageComponent {
-  ndaData: NdaFormData | null = null;
+  docResult: DocResult | null = null;
 
-  onFormSubmitted(data: NdaFormData): void {
-    this.ndaData = data;
+  onFormSubmitted(result: DocResult): void {
+    this.docResult = result;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   onEditRequested(): void {
-    this.ndaData = null;
+    this.docResult = null;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

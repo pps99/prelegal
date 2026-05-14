@@ -13,9 +13,10 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 COPY backend/pyproject.toml ./
-RUN uv pip install --system fastapi "uvicorn[standard]" sqlalchemy python-multipart
+RUN uv pip install --system fastapi "uvicorn[standard]" sqlalchemy python-multipart litellm python-dotenv Markdown
 
 COPY backend/ ./
+COPY templates/ ./templates/
 
 # Copy built Angular into static/ so FastAPI can serve it
 COPY --from=frontend-build /build/frontend/dist/frontend/browser ./static

@@ -19,6 +19,7 @@ class ChatSession(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     messages: Mapped[str] = mapped_column(Text, default="[]")
+    document_type: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc)
     )
