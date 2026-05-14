@@ -1,41 +1,32 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NdaFormData } from '../../models/nda-data.model';
+import { mndaTermLabel, confidentialityTermLabel, formatNdaDate } from '../../models/nda-labels';
 import { NdaDownloadService } from '../../services/nda-download.service';
 
 @Component({
   selector: 'app-nda-preview',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule],
   templateUrl: './nda-preview.component.html',
   styleUrls: ['./nda-preview.component.scss'],
-  providers: [DatePipe],
 })
 export class NdaPreviewComponent {
   @Input() data!: NdaFormData;
   @Output() editRequested = new EventEmitter<void>();
 
-  constructor(private downloadService: NdaDownloadService, private datePipe: DatePipe) {}
+  constructor(private downloadService: NdaDownloadService) {}
 
   get mndaTermLabel(): string {
-    if (this.data.mndaTerm === 'one_year') {
-      const y = this.data.mndaTermYears;
-      return `Expires ${y} year${y !== 1 ? 's' : ''} from Effective Date.`;
-    }
-    return 'Continues until terminated in accordance with the terms of the MNDA.';
+    return mndaTermLabel(this.data);
   }
 
   get confidentialityTermLabel(): string {
-    if (this.data.termOfConfidentiality === 'one_year') {
-      const y = this.data.confidentialityYears;
-      return `${y} year${y !== 1 ? 's' : ''} from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.`;
-    }
-    return 'In perpetuity.';
+    return confidentialityTermLabel(this.data);
   }
 
   formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-    return this.datePipe.transform(dateStr + 'T00:00:00', 'MMMM d, y') ?? dateStr;
+    return formatNdaDate(dateStr);
   }
 
   onEdit(): void {

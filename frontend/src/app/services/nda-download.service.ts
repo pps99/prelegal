@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NdaFormData } from '../models/nda-data.model';
+import { mndaTermLabel, confidentialityTermLabel, formatNdaDate } from '../models/nda-labels';
 
 @Injectable({ providedIn: 'root' })
 export class NdaDownloadService {
@@ -9,47 +10,49 @@ export class NdaDownloadService {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `mutual-nda-${data.party1.companyName.replace(/\s+/g, '-').toLowerCase()}-${data.party2.companyName.replace(/\s+/g, '-').toLowerCase()}.html`;
+    a.download = `mutual-nda-${this.toSlug(data.party1.companyName)}-${this.toSlug(data.party2.companyName)}.html`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
-  private formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-    const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  private toSlug(name: string): string {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   }
 
-  private mndaTermLabel(data: NdaFormData): string {
-    if (data.mndaTerm === 'one_year') {
-      const y = data.mndaTermYears;
-      return `Expires ${y} year${y !== 1 ? 's' : ''} from Effective Date.`;
-    }
-    return 'Continues until terminated in accordance with the terms of the MNDA.';
-  }
-
-  private confidentialityLabel(data: NdaFormData): string {
-    if (data.termOfConfidentiality === 'one_year') {
-      const y = data.confidentialityYears;
-      return `${y} year${y !== 1 ? 's' : ''} from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.`;
-    }
-    return 'In perpetuity.';
+  private escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   private buildHtmlDocument(data: NdaFormData): string {
-    const p = data.purpose;
-    const ed = this.formatDate(data.effectiveDate);
-    const mndaTerm = this.mndaTermLabel(data);
-    const confTerm = this.confidentialityLabel(data);
-    const gl = data.governingLaw;
-    const jur = data.jurisdiction;
+    const e = (s: string) => this.escapeHtml(s);
+    const p = e(data.purpose);
+    const ed = formatNdaDate(data.effectiveDate);
+    const mndaTerm = e(mndaTermLabel(data));
+    const confTerm = e(confidentialityTermLabel(data));
+    const gl = e(data.governingLaw);
+    const jur = e(data.jurisdiction);
+    const p1name = e(data.party1.companyName);
+    const p2name = e(data.party2.companyName);
+    const p1contact = e(data.party1.contactName);
+    const p2contact = e(data.party2.contactName);
+    const p1title = e(data.party1.title);
+    const p2title = e(data.party2.title);
+    const p1address = e(data.party1.noticeAddress);
+    const p2address = e(data.party2.noticeAddress);
+    const p1date = formatNdaDate(data.party1.signatureDate);
+    const p2date = formatNdaDate(data.party2.signatureDate);
 
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mutual Non-Disclosure Agreement – ${data.party1.companyName} &amp; ${data.party2.companyName}</title>
+  <title>Mutual Non-Disclosure Agreement – ${p1name} &amp; ${p2name}</title>
   <style>
     body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; line-height: 1.7; color: #111; max-width: 780px; margin: 40px auto; padding: 0 24px; }
     h1 { text-align: center; font-size: 14pt; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.5em; }
@@ -115,8 +118,8 @@ export class NdaDownloadService {
     <thead>
       <tr>
         <th></th>
-        <th>${data.party1.companyName}</th>
-        <th>${data.party2.companyName}</th>
+        <th>${p1name}</th>
+        <th>${p2name}</th>
       </tr>
     </thead>
     <tbody>
@@ -127,28 +130,28 @@ export class NdaDownloadService {
       </tr>
       <tr>
         <td class="row-label">Print Name</td>
-        <td>${data.party1.contactName}</td>
-        <td>${data.party2.contactName}</td>
+        <td>${p1contact}</td>
+        <td>${p2contact}</td>
       </tr>
       <tr>
         <td class="row-label">Title</td>
-        <td>${data.party1.title}</td>
-        <td>${data.party2.title}</td>
+        <td>${p1title}</td>
+        <td>${p2title}</td>
       </tr>
       <tr>
         <td class="row-label">Company</td>
-        <td>${data.party1.companyName}</td>
-        <td>${data.party2.companyName}</td>
+        <td>${p1name}</td>
+        <td>${p2name}</td>
       </tr>
       <tr>
         <td class="row-label">Notice Address</td>
-        <td>${data.party1.noticeAddress}</td>
-        <td>${data.party2.noticeAddress}</td>
+        <td>${p1address}</td>
+        <td>${p2address}</td>
       </tr>
       <tr>
         <td class="row-label">Date</td>
-        <td>${this.formatDate(data.party1.signatureDate)}</td>
-        <td>${this.formatDate(data.party2.signatureDate)}</td>
+        <td>${p1date}</td>
+        <td>${p2date}</td>
       </tr>
     </tbody>
   </table>

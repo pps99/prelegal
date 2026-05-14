@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NdaFormData } from '../../models/nda-data.model';
 
 @Component({
@@ -15,6 +16,8 @@ export class NdaFormComponent implements OnInit {
 
   form!: FormGroup;
   today = new Date().toISOString().split('T')[0];
+
+  private destroyRef = inject(DestroyRef);
 
   constructor(private fb: FormBuilder) {}
 
@@ -46,6 +49,21 @@ export class NdaFormComponent implements OnInit {
       governingLaw: ['', Validators.required],
       jurisdiction: ['', Validators.required],
     });
+
+    this.bindYearsToggle('mndaTerm', 'mndaTermYears', 'one_year');
+    this.bindYearsToggle('termOfConfidentiality', 'confidentialityYears', 'one_year');
+  }
+
+  private bindYearsToggle(parentPath: string, yearsPath: string, activeValue: string): void {
+    const parentCtrl = this.form.get(parentPath)!;
+    const yearsCtrl = this.form.get(yearsPath)!;
+
+    // Set initial state synchronously
+    parentCtrl.value === activeValue ? yearsCtrl.enable() : yearsCtrl.disable();
+
+    parentCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => (val === activeValue ? yearsCtrl.enable() : yearsCtrl.disable()));
   }
 
   get party1() {
@@ -56,17 +74,17 @@ export class NdaFormComponent implements OnInit {
     return this.form.get('party2') as FormGroup;
   }
 
-  get mndaTerm() {
-    return this.form.get('mndaTerm')?.value;
+  get mndaTermYearsDisabled(): boolean {
+    return this.form.get('mndaTermYears')?.disabled ?? false;
   }
 
-  get termOfConfidentiality() {
-    return this.form.get('termOfConfidentiality')?.value;
+  get confidentialityYearsDisabled(): boolean {
+    return this.form.get('confidentialityYears')?.disabled ?? false;
   }
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.formSubmitted.emit(this.form.value as NdaFormData);
+      this.formSubmitted.emit(this.form.getRawValue() as NdaFormData);
     } else {
       this.form.markAllAsTouched();
     }

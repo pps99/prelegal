@@ -183,3 +183,9 @@
     transform: scale(0.98);
   }
 }
+
+.disabled-input {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #e5e7eb !important;
+}

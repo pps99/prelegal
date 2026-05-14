@@ -50,7 +50,7 @@
               formControlName="mndaTermYears"
               min="1"
               class="inline-number"
-              [disabled]="mndaTerm !== 'one_year'"
+              [class.disabled-input]="mndaTermYearsDisabled"
             />
             <span>year(s) from Effective Date</span>
           </label>
@@ -72,7 +72,7 @@
               formControlName="confidentialityYears"
               min="1"
               class="inline-number"
-              [disabled]="termOfConfidentiality !== 'one_year'"
+              [class.disabled-input]="confidentialityYearsDisabled"
             />
             <span>year(s) from Effective Date (except trade secrets until no longer a trade secret)</span>
           </label>

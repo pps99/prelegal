@@ -1,10 +1,5 @@
-<app-nda-form
-  *ngIf="!ndaData"
-  (formSubmitted)="onFormSubmitted($event)"
-></app-nda-form>
-
-<app-nda-preview
-  *ngIf="ndaData"
-  [data]="ndaData"
-  (editRequested)="onEditRequested()"
-></app-nda-preview>
+@if (!ndaData) {
+  <app-nda-form (formSubmitted)="onFormSubmitted($event)"></app-nda-form>
+} @else {
+  <app-nda-preview [data]="ndaData" (editRequested)="onEditRequested()"></app-nda-preview>
+}
