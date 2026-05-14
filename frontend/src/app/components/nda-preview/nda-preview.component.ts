@@ -12,6 +12,7 @@ import { NdaDownloadService } from '../../services/nda-download.service';
 })
 export class NdaPreviewComponent {
   @Input() data!: NdaFormData;
+  @Input() showActions = true;
   @Output() editRequested = new EventEmitter<void>();
 
   constructor(private downloadService: NdaDownloadService) {}

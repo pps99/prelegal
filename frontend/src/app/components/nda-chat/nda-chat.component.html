@@ -1,0 +1,63 @@
+<div class="chat-layout">
+
+  <!-- Left: Chat Panel -->
+  <div class="chat-panel">
+    <div class="panel-header">
+      <div class="logo">⚖️ <span>PreLegal</span></div>
+      <h1>Mutual NDA Assistant</h1>
+      <p>Chat with AI to draft your agreement</p>
+    </div>
+
+    @if (error) {
+      <div class="error-banner">⚠ {{ error }}</div>
+    }
+
+    <div class="messages" #messagesEl>
+      @for (msg of messages; track $index) {
+        <div class="msg" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          <div class="bubble">{{ msg.content }}</div>
+        </div>
+      }
+      @if (loading) {
+        <div class="msg assistant">
+          <div class="bubble typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="input-area">
+      <textarea
+        [(ngModel)]="inputText"
+        (keydown)="onKeydown($event)"
+        placeholder="Type your message… (Enter to send, Shift+Enter for new line)"
+        [disabled]="loading || !sessionId"
+        rows="3"
+      ></textarea>
+      <div class="input-actions">
+        <button
+          class="btn-send"
+          (click)="sendMessage()"
+          [disabled]="loading || !inputText.trim() || !sessionId"
+        >
+          Send
+        </button>
+        <button
+          class="btn-generate"
+          (click)="generateDocument()"
+          [disabled]="generating || loading || !sessionId"
+        >
+          @if (generating) { Generating… } @else { Generate Document → }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Live NDA Preview -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <app-nda-preview [data]="previewData" [showActions]="false" />
+  </div>
+
+</div>

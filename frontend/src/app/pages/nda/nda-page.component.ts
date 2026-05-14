@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { NdaFormComponent } from '../../components/nda-form/nda-form.component';
+import { NdaChatComponent } from '../../components/nda-chat/nda-chat.component';
 import { NdaPreviewComponent } from '../../components/nda-preview/nda-preview.component';
 import { NdaFormData } from '../../models/nda-data.model';
 
 @Component({
   selector: 'app-nda-page',
   standalone: true,
-  imports: [NdaFormComponent, NdaPreviewComponent],
+  imports: [NdaChatComponent, NdaPreviewComponent],
   templateUrl: './nda-page.component.html',
   styleUrl: './nda-page.component.scss',
 })

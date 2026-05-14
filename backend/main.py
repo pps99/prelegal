@@ -3,9 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from dotenv import load_dotenv
 from app.database import init_db
-from app.models import User  # noqa: F401 — registers model with Base.metadata before init_db
-from app.routers import auth
+from app.models import User, ChatSession  # noqa: F401 — registers models with Base.metadata before init_db
+from app.routers import auth, chat
+
+load_dotenv()
 
 STATIC_DIR = os.environ.get("STATIC_DIR", os.path.join(os.path.dirname(__file__), "static"))
 
@@ -19,6 +22,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Prelegal API", lifespan=lifespan)
 
 app.include_router(auth.router, prefix="/api/auth")
+app.include_router(chat.router, prefix="/api/chat")
 
 
 @app.get("/api/health")

@@ -1,15 +1,17 @@
 <div class="preview-wrapper">
 
-  <!-- Toolbar (hidden on print) -->
-  <div class="toolbar no-print">
-    <div class="toolbar-left">
-      <button class="btn-secondary" (click)="onEdit()">← Edit Details</button>
+  @if (showActions) {
+    <!-- Toolbar (hidden on print) -->
+    <div class="toolbar no-print">
+      <div class="toolbar-left">
+        <button class="btn-secondary" (click)="onEdit()">← Edit Details</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn-secondary" (click)="onPrint()">🖨 Print / Save as PDF</button>
+        <button class="btn-primary" (click)="onDownload()">⬇ Download HTML</button>
+      </div>
     </div>
-    <div class="toolbar-right">
-      <button class="btn-secondary" (click)="onPrint()">🖨 Print / Save as PDF</button>
-      <button class="btn-primary" (click)="onDownload()">⬇ Download HTML</button>
-    </div>
-  </div>
+  }
 
   <!-- NDA Document -->
   <div class="document" id="nda-document">
