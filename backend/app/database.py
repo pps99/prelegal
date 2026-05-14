@@ -14,6 +14,7 @@ class Base(DeclarativeBase):
 
 
 def init_db() -> None:
+    engine.dispose()
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     Base.metadata.create_all(bind=engine)

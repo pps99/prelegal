@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
+import { of } from 'rxjs';
 import { NdaPageComponent } from './nda-page.component';
+import { ChatService } from '../../services/chat.service';
 import { NdaFormData } from '../../models/nda-data.model';
 
 const FULL_NDA_DATA: NdaFormData = {
@@ -17,9 +20,15 @@ const FULL_NDA_DATA: NdaFormData = {
 };
 
 describe('NdaPageComponent', () => {
+  let chatSpy: jasmine.SpyObj<ChatService>;
+
   beforeEach(async () => {
+    chatSpy = jasmine.createSpyObj('ChatService', ['createSession', 'sendMessage', 'generateDocument']);
+    chatSpy.createSession.and.returnValue(of({ session_id: 1, greeting: 'Hello!' }));
+
     await TestBed.configureTestingModule({
-      imports: [NdaPageComponent],
+      imports: [NdaPageComponent, HttpClientTestingModule],
+      providers: [{ provide: ChatService, useValue: chatSpy }],
     }).compileComponents();
   });
 
@@ -28,28 +37,28 @@ describe('NdaPageComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should start with ndaData as null (show form)', () => {
+  it('should start with ndaData as null', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     expect(fixture.componentInstance.ndaData).toBeNull();
   });
 
-  it('should show the NDA form initially', () => {
+  it('should show the chat component initially', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('app-nda-form'))).toBeTruthy();
-    expect(fixture.debugElement.query(By.css('app-nda-preview'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeTruthy();
+    expect(fixture.componentInstance.ndaData).toBeNull();
   });
 
-  it('should show preview and hide form after formSubmitted', () => {
+  it('should show preview and hide chat after formSubmitted', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
     fixture.componentInstance.onFormSubmitted(FULL_NDA_DATA);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('app-nda-form'))).toBeNull();
-    expect(fixture.debugElement.query(By.css('app-nda-preview'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeNull();
+    expect(fixture.componentInstance.ndaData).toEqual(FULL_NDA_DATA);
   });
 
-  it('should return to form after editRequested', () => {
+  it('should return to chat after editRequested', () => {
     const fixture = TestBed.createComponent(NdaPageComponent);
     fixture.detectChanges();
     fixture.componentInstance.onFormSubmitted(FULL_NDA_DATA);
@@ -57,6 +66,6 @@ describe('NdaPageComponent', () => {
     fixture.componentInstance.onEditRequested();
     fixture.detectChanges();
     expect(fixture.componentInstance.ndaData).toBeNull();
-    expect(fixture.debugElement.query(By.css('app-nda-form'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('app-nda-chat'))).toBeTruthy();
   });
 });
