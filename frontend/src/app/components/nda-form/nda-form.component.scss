@@ -22,7 +22,7 @@
     .logo-text {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: #032147;
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
@@ -31,7 +31,7 @@
   h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: #032147;
     margin: 0 0 0.5rem;
   }
 
@@ -53,7 +53,7 @@
   h2 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1a1a2e;
+    color: #032147;
     margin: 0 0 1.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid #f3f4f6;
@@ -103,8 +103,8 @@
 
     &:focus {
       outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      border-color: #209dd7;
+      box-shadow: 0 0 0 3px rgba(32, 157, 215, 0.15);
       background: #fff;
     }
 
@@ -134,7 +134,7 @@
   cursor: pointer;
 
   input[type='radio'] {
-    accent-color: #6366f1;
+    accent-color: #209dd7;
     width: 1rem;
     height: 1rem;
     flex-shrink: 0;
@@ -165,7 +165,7 @@
 }
 
 .btn-primary {
-  background: #6366f1;
+  background: #753991;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -176,7 +176,7 @@
   transition: background 0.15s, transform 0.1s;
 
   &:hover {
-    background: #4f46e5;
+    background: #622f7a;
   }
 
   &:active {
