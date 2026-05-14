@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { NdaFormData } from '../../models/nda-data.model';
 import { mndaTermLabel, confidentialityTermLabel, formatNdaDate } from '../../models/nda-labels';
 import { NdaDownloadService } from '../../services/nda-download.service';
@@ -7,9 +6,9 @@ import { NdaDownloadService } from '../../services/nda-download.service';
 @Component({
   selector: 'app-nda-preview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './nda-preview.component.html',
-  styleUrls: ['./nda-preview.component.scss'],
+  styleUrl: './nda-preview.component.scss',
 })
 export class NdaPreviewComponent {
   @Input() data!: NdaFormData;

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Output, OnInit, inject, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NdaFormData } from '../../models/nda-data.model';
@@ -7,9 +6,9 @@ import { NdaFormData } from '../../models/nda-data.model';
 @Component({
   selector: 'app-nda-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './nda-form.component.html',
-  styleUrls: ['./nda-form.component.scss'],
+  styleUrl: './nda-form.component.scss',
 })
 export class NdaFormComponent implements OnInit {
   @Output() formSubmitted = new EventEmitter<NdaFormData>();

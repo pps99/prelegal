@@ -23,7 +23,7 @@
           placeholder="How Confidential Information may be used"
           [class.invalid]="isInvalid('purpose')"
         ></textarea>
-        <span class="error-msg" *ngIf="isInvalid('purpose')">Purpose is required</span>
+        @if (isInvalid('purpose')) { <span class="error-msg">Purpose is required</span> }
       </div>
 
       <div class="form-row">
@@ -35,7 +35,7 @@
             formControlName="effectiveDate"
             [class.invalid]="isInvalid('effectiveDate')"
           />
-          <span class="error-msg" *ngIf="isInvalid('effectiveDate')">Effective date is required</span>
+          @if (isInvalid('effectiveDate')) { <span class="error-msg">Effective date is required</span> }
         </div>
       </div>
 
@@ -93,7 +93,7 @@
             placeholder="e.g. Delaware"
             [class.invalid]="isInvalid('governingLaw')"
           />
-          <span class="error-msg" *ngIf="isInvalid('governingLaw')">Governing law is required</span>
+          @if (isInvalid('governingLaw')) { <span class="error-msg">Governing law is required</span> }
         </div>
         <div class="form-group">
           <label for="jurisdiction">Jurisdiction <span class="required">*</span></label>
@@ -104,7 +104,7 @@
             placeholder="e.g. New Castle, DE"
             [class.invalid]="isInvalid('jurisdiction')"
           />
-          <span class="error-msg" *ngIf="isInvalid('jurisdiction')">Jurisdiction is required</span>
+          @if (isInvalid('jurisdiction')) { <span class="error-msg">Jurisdiction is required</span> }
         </div>
       </div>
     </section>
@@ -122,7 +122,7 @@
             placeholder="Acme Corp"
             [class.invalid]="isInvalid('party1.companyName')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party1.companyName')">Company name is required</span>
+          @if (isInvalid('party1.companyName')) { <span class="error-msg">Company name is required</span> }
         </div>
         <div class="form-group">
           <label for="p1ContactName">Contact Name <span class="required">*</span></label>
@@ -133,7 +133,7 @@
             placeholder="Jane Doe"
             [class.invalid]="isInvalid('party1.contactName')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party1.contactName')">Contact name is required</span>
+          @if (isInvalid('party1.contactName')) { <span class="error-msg">Contact name is required</span> }
         </div>
       </div>
       <div class="form-row">
@@ -146,7 +146,7 @@
             placeholder="CEO"
             [class.invalid]="isInvalid('party1.title')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party1.title')">Title is required</span>
+          @if (isInvalid('party1.title')) { <span class="error-msg">Title is required</span> }
         </div>
         <div class="form-group">
           <label for="p1SignatureDate">Signature Date <span class="required">*</span></label>
@@ -156,7 +156,7 @@
             formControlName="signatureDate"
             [class.invalid]="isInvalid('party1.signatureDate')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party1.signatureDate')">Signature date is required</span>
+          @if (isInvalid('party1.signatureDate')) { <span class="error-msg">Signature date is required</span> }
         </div>
       </div>
       <div class="form-group">
@@ -168,7 +168,7 @@
           placeholder="123 Main St, Springfield, IL 62701 or email@example.com"
           [class.invalid]="isInvalid('party1.noticeAddress')"
         ></textarea>
-        <span class="error-msg" *ngIf="isInvalid('party1.noticeAddress')">Notice address is required</span>
+        @if (isInvalid('party1.noticeAddress')) { <span class="error-msg">Notice address is required</span> }
       </div>
     </section>
 
@@ -185,7 +185,7 @@
             placeholder="Globex Inc"
             [class.invalid]="isInvalid('party2.companyName')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party2.companyName')">Company name is required</span>
+          @if (isInvalid('party2.companyName')) { <span class="error-msg">Company name is required</span> }
         </div>
         <div class="form-group">
           <label for="p2ContactName">Contact Name <span class="required">*</span></label>
@@ -196,7 +196,7 @@
             placeholder="John Smith"
             [class.invalid]="isInvalid('party2.contactName')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party2.contactName')">Contact name is required</span>
+          @if (isInvalid('party2.contactName')) { <span class="error-msg">Contact name is required</span> }
         </div>
       </div>
       <div class="form-row">
@@ -209,7 +209,7 @@
             placeholder="CTO"
             [class.invalid]="isInvalid('party2.title')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party2.title')">Title is required</span>
+          @if (isInvalid('party2.title')) { <span class="error-msg">Title is required</span> }
         </div>
         <div class="form-group">
           <label for="p2SignatureDate">Signature Date <span class="required">*</span></label>
@@ -219,7 +219,7 @@
             formControlName="signatureDate"
             [class.invalid]="isInvalid('party2.signatureDate')"
           />
-          <span class="error-msg" *ngIf="isInvalid('party2.signatureDate')">Signature date is required</span>
+          @if (isInvalid('party2.signatureDate')) { <span class="error-msg">Signature date is required</span> }
         </div>
       </div>
       <div class="form-group">
@@ -231,7 +231,7 @@
           placeholder="456 Oak Ave, Springfield, IL 62702 or email@example.com"
           [class.invalid]="isInvalid('party2.noticeAddress')"
         ></textarea>
-        <span class="error-msg" *ngIf="isInvalid('party2.noticeAddress')">Notice address is required</span>
+        @if (isInvalid('party2.noticeAddress')) { <span class="error-msg">Notice address is required</span> }
       </div>
     </section>
 
