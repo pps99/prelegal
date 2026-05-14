@@ -4,7 +4,7 @@
   <div class="chat-panel">
     <div class="panel-header">
       <div class="logo">⚖️ <span>PreLegal</span></div>
-      <h1>Mutual NDA Assistant</h1>
+      <h1>{{ documentType ? documentDisplayName + ' Assistant' : 'Legal Document Assistant' }}</h1>
       <p>Chat with AI to draft your agreement</p>
     </div>
 
@@ -29,6 +29,7 @@
 
     <div class="input-area">
       <textarea
+        #inputEl
         [(ngModel)]="inputText"
         (keydown)="onKeydown($event)"
         placeholder="Type your message… (Enter to send, Shift+Enter for new line)"
@@ -43,21 +44,56 @@
         >
           Send
         </button>
-        <button
-          class="btn-generate"
-          (click)="generateDocument()"
-          [disabled]="generating || loading || !sessionId"
-        >
-          @if (generating) { Generating… } @else { Generate Document → }
-        </button>
+        @if (documentType) {
+          <button
+            class="btn-generate"
+            (click)="generateDocument()"
+            [disabled]="generating || loading || !sessionId"
+          >
+            @if (generating) { Generating… } @else { Generate Document → }
+          </button>
+        }
       </div>
     </div>
   </div>
 
-  <!-- Right: Live NDA Preview -->
-  <div class="preview-panel">
-    <div class="preview-label">Live Preview</div>
-    <app-nda-preview [data]="previewData" [showActions]="false" />
+  <!-- Right: Info / Fields Panel -->
+  <div class="info-panel">
+    @if (!documentType) {
+      <div class="panel-section">
+        <div class="section-label">Available Documents</div>
+        <ul class="doc-list">
+          <li>Mutual NDA</li>
+          <li>Cloud Service Agreement</li>
+          <li>Design Partner Agreement</li>
+          <li>Service Level Agreement</li>
+          <li>Professional Services Agreement</li>
+          <li>Data Processing Agreement</li>
+          <li>Software License Agreement</li>
+          <li>Partnership Agreement</li>
+          <li>Pilot Agreement</li>
+          <li>Business Associate Agreement</li>
+          <li>AI Addendum</li>
+        </ul>
+        <p class="info-hint">Tell the AI which document you need and it will guide you through the details.</p>
+      </div>
+    } @else {
+      <div class="panel-section">
+        <div class="section-label">Collected Fields — {{ documentDisplayName }}</div>
+        @if (fieldEntries.length === 0) {
+          <p class="info-hint">No fields collected yet. Continue chatting to fill in the details.</p>
+        } @else {
+          <dl class="field-list">
+            @for (entry of fieldEntries; track entry.label) {
+              <div class="field-row">
+                <dt>{{ entry.label }}</dt>
+                <dd>{{ entry.value }}</dd>
+              </div>
+            }
+          </dl>
+        }
+      </div>
+    }
   </div>
 
 </div>

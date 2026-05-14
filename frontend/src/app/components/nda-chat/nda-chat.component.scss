@@ -212,25 +212,79 @@
   }
 }
 
-/* ── Preview Panel ──────────────────────────────────── */
+/* ── Info / Fields Panel ────────────────────────────── */
 
-.preview-panel {
+.info-panel {
   overflow-y: auto;
   height: 100vh;
   background: #f8fafc;
+}
 
-  .preview-label {
-    position: sticky;
-    top: 0;
-    background: #f8fafc;
-    padding: 10px 24px;
+.panel-section {
+  padding: 20px 24px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+
+  li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px solid #f0f0f0;
+
+    &::before {
+      content: '›';
+      color: #209dd7;
+      margin-right: 8px;
+      font-weight: 700;
+    }
+  }
+}
+
+.info-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.field-list {
+  margin: 0;
+}
+
+.field-row {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+
+  dt {
     font-size: 11px;
-    font-weight: 700;
-    color: #9ca3af;
+    font-weight: 600;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-bottom: 1px solid #e5e7eb;
-    z-index: 10;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+
+  dd {
+    font-size: 13px;
+    color: #032147;
+    margin: 0;
+    word-break: break-word;
   }
 }
 
@@ -241,7 +295,7 @@
     grid-template-columns: 1fr;
   }
 
-  .preview-panel {
+  .info-panel {
     display: none;
   }
 }

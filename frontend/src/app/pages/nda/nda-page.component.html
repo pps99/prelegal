@@ -1,5 +1,5 @@
-@if (!ndaData) {
+@if (!docResult) {
   <app-nda-chat (formSubmitted)="onFormSubmitted($event)"></app-nda-chat>
 } @else {
-  <app-nda-preview [data]="ndaData" (editRequested)="onEditRequested()"></app-nda-preview>
+  <app-nda-preview [renderedHtml]="docResult.renderedHtml" (editRequested)="onEditRequested()"></app-nda-preview>
 }

@@ -1,28 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { NdaFormData } from '../models/nda-data.model';
-
-export interface PartialPartyInfo {
-  companyName: string | null;
-  contactName: string | null;
-  title: string | null;
-  noticeAddress: string | null;
-  signatureDate: string | null;
-}
-
-export interface PartialNdaData {
-  party1: PartialPartyInfo;
-  party2: PartialPartyInfo;
-  purpose: string | null;
-  effectiveDate: string | null;
-  mndaTerm: 'one_year' | 'until_terminated' | null;
-  mndaTermYears: number | null;
-  termOfConfidentiality: 'one_year' | 'in_perpetuity' | null;
-  confidentialityYears: number | null;
-  governingLaw: string | null;
-  jurisdiction: string | null;
-}
 
 export interface CreateSessionResponse {
   session_id: number;
@@ -31,11 +9,13 @@ export interface CreateSessionResponse {
 
 export interface MessageResponse {
   message: string;
-  partial_nda_data: PartialNdaData;
+  document_type: string | null;
+  partial_data: Record<string, any> | null;
 }
 
 export interface GenerateResponse {
-  nda_data: NdaFormData;
+  fields: Record<string, any>;
+  rendered_html: string;
 }
 
 @Injectable({ providedIn: 'root' })
