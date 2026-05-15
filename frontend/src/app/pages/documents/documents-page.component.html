@@ -1,0 +1,72 @@
+<div class="docs-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-mark"></span>
+        <span class="logo-text">prelegal</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/" class="nav-link">+ New document</a>
+        <a routerLink="/documents" class="nav-link active">My documents</a>
+      </nav>
+    </div>
+
+    @if (error) {
+      <div class="error-notice">{{ error }}</div>
+    }
+
+    @if (loadingList) {
+      <div class="loading-state">Loading…</div>
+    } @else if (documents.length === 0) {
+      <div class="empty-state">
+        <p>No documents yet.</p>
+        <a routerLink="/">Draft your first one →</a>
+      </div>
+    } @else {
+      <ul class="doc-list">
+        @for (doc of documents; track doc.id) {
+          <li
+            class="doc-item"
+            [class.active]="selected?.id === doc.id"
+            (click)="selectDocument(doc.id)"
+          >
+            <span class="doc-title">{{ doc.title }}</span>
+            <span class="doc-meta">{{ doc.created_at | date:'MMM d, y' }}</span>
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="sidebar-footer">
+      <span class="user-email">{{ userEmail }}</span>
+      <button class="btn-logout" (click)="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    @if (!selected && !loadingDoc) {
+      <div class="placeholder">
+        <div class="placeholder-icon">📄</div>
+        <h2>Select a document</h2>
+        <p>Choose a document from the sidebar to preview it.</p>
+      </div>
+    } @else if (loadingDoc) {
+      <div class="placeholder">
+        <p>Loading document…</p>
+      </div>
+    } @else {
+      <div class="doc-toolbar">
+        <h2 class="doc-title-heading">{{ selected!.title }}</h2>
+        <button class="btn-download" (click)="onDownloadPdf()">⬇ Download PDF</button>
+      </div>
+      <div class="disclaimer-banner">
+        ⚠ This document is a draft generated with AI assistance. It should be reviewed by a qualified legal professional before use.
+      </div>
+      <div class="doc-preview" [innerHTML]="safeHtml"></div>
+    }
+  </main>
+
+</div>

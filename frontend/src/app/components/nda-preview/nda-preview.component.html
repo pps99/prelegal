@@ -9,6 +9,9 @@
         <button class="btn-primary" (click)="onDownloadPdf()">⬇ Download PDF</button>
       </div>
     </div>
+    <div class="disclaimer-bar no-print">
+      ⚠ This document is a draft generated with AI assistance. It should be reviewed by a qualified legal professional before use.
+    </div>
   }
 
   <div class="document" [innerHTML]="safeHtml"></div>

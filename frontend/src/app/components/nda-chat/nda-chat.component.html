@@ -3,7 +3,18 @@
   <!-- Left: Chat Panel -->
   <div class="chat-panel">
     <div class="panel-header">
-      <div class="logo">⚖️ <span>PreLegal</span></div>
+      <div class="header-top">
+        <div class="logo">
+          <span class="logo-mark"></span>
+          <span>prelegal</span>
+        </div>
+        <div class="header-actions">
+          <a routerLink="/documents" class="btn-docs">My documents</a>
+          <button class="btn-user-menu" (click)="logout()" title="Sign out">
+            <span class="user-initial">{{ userEmail[0]?.toUpperCase() }}</span>
+          </button>
+        </div>
+      </div>
       <h1>{{ documentType ? documentDisplayName + ' Assistant' : 'Legal Document Assistant' }}</h1>
       <p>Chat with AI to draft your agreement</p>
     </div>
@@ -94,6 +105,11 @@
         }
       </div>
     }
+
+    <div class="disclaimer-section">
+      <div class="disclaimer-icon">⚠</div>
+      <p>Generated documents are AI-assisted drafts. Always have them reviewed by a qualified legal professional before use.</p>
+    </div>
   </div>
 
 </div>

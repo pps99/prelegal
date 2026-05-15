@@ -1,12 +1,14 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+
 from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
 from app.database import init_db
-from app.models import User, ChatSession  # noqa: F401 — registers models with Base.metadata before init_db
-from app.routers import auth, chat
+from app.models import ChatSession, Document, User  # noqa: F401 — registers models with Base.metadata
+from app.routers import auth, chat, documents
 
 load_dotenv()
 
@@ -23,6 +25,7 @@ app = FastAPI(title="Prelegal API", lifespan=lifespan)
 
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(chat.router, prefix="/api/chat")
+app.include_router(documents.router, prefix="/api/documents")
 
 
 @app.get("/api/health")
