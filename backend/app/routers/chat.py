@@ -1,9 +1,12 @@
 import json
+import logging
 import os
 from datetime import datetime, timezone
 
 import litellm
 from fastapi import APIRouter, Depends, HTTPException
+
+logger = logging.getLogger(__name__)
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -32,22 +35,42 @@ def _parse_session_messages(raw: str) -> list[dict]:
 
 
 async def _llm(messages: list[dict], schema: dict) -> dict:
-    response = await litellm.acompletion(
-        model="openrouter/openai/gpt-oss-120b:free",
-        messages=messages,
-        response_format={
-            "type": "json_schema",
-            "json_schema": {"name": "doc_response", "schema": schema},
-        },
-        extra_body={"provider": {"order": ["Cerebras"], "allow_fallbacks": True}},
-        api_key=os.getenv("OPENROUTER_API_KEY"),
+    # Inject JSON schema instruction into the system message so models that
+    # ignore response_format still return structured JSON.
+    schema_instruction = (
+        f"\n\nYou MUST respond with ONLY valid JSON. No prose, no markdown, no code fences. "
+        f"Your response must match this JSON schema exactly:\n{json.dumps(schema, indent=2)}"
     )
+    patched = []
+    injected = False
+    for msg in messages:
+        if msg["role"] == "system" and not injected:
+            patched.append({"role": "system", "content": msg["content"] + schema_instruction})
+            injected = True
+        else:
+            patched.append(msg)
+    if not injected:
+        patched.insert(0, {"role": "system", "content": schema_instruction})
+
+    try:
+        response = await litellm.acompletion(
+            model="openrouter/openai/gpt-oss-120b:free",
+            messages=patched,
+            response_format={"type": "json_object"},
+            extra_body={"provider": {"order": ["Cerebras"], "allow_fallbacks": True}},
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+        )
+    except Exception as exc:
+        logger.error("LLM call failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=502, detail=f"LLM call failed: {exc}") from exc
     content = response.choices[0].message.content
+    logger.info("LLM raw response: %s", content[:500] if content else "<empty>")
     if not content:
         raise HTTPException(status_code=502, detail="LLM returned empty response")
     try:
         return json.loads(content)
     except json.JSONDecodeError as exc:
+        logger.error("LLM returned invalid JSON: %s", content[:500])
         raise HTTPException(status_code=502, detail="LLM returned invalid JSON") from exc
 
 

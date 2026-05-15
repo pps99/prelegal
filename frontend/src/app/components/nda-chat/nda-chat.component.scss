@@ -1,11 +1,9 @@
 .chat-layout {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 70% 1fr;
   height: 100vh;
   overflow: hidden;
 }
-
-/* ── Chat Panel ─────────────────────────────────────── */
 
 .chat-panel {
   display: flex;
@@ -103,9 +101,7 @@
   justify-content: center;
   transition: opacity 0.15s;
 
-  &:hover {
-    opacity: 0.8;
-  }
+  &:hover { opacity: 0.8; }
 
   .user-initial {
     color: #fff;
@@ -124,8 +120,6 @@
   flex-shrink: 0;
 }
 
-/* ── Messages ───────────────────────────────────────── */
-
 .messages {
   flex: 1;
   overflow-y: auto;
@@ -140,22 +134,12 @@
 
   &.user {
     justify-content: flex-end;
-
-    .bubble {
-      background: #209dd7;
-      color: #fff;
-      border-radius: 16px 16px 4px 16px;
-    }
+    .bubble { background: #209dd7; color: #fff; border-radius: 16px 16px 4px 16px; }
   }
 
   &.assistant {
     justify-content: flex-start;
-
-    .bubble {
-      background: #f3f4f6;
-      color: #032147;
-      border-radius: 16px 16px 16px 4px;
-    }
+    .bubble { background: #f3f4f6; color: #032147; border-radius: 16px 16px 16px 4px; }
   }
 }
 
@@ -167,8 +151,6 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-
-/* ── Typing Indicator ───────────────────────────────── */
 
 .typing {
   display: flex;
@@ -183,26 +165,15 @@
     background: #9ca3af;
     animation: typing-bounce 1.2s infinite ease-in-out;
 
-    &:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    &:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
   }
 }
 
 @keyframes typing-bounce {
-  0%, 60%, 100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-5px);
-  }
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
 }
-
-/* ── Input Area ─────────────────────────────────────── */
 
 .input-area {
   padding: 16px 20px 20px;
@@ -221,15 +192,8 @@
     box-sizing: border-box;
     transition: border-color 0.15s;
 
-    &:focus {
-      border-color: #209dd7;
-    }
-
-    &:disabled {
-      background: #f9fafb;
-      color: #888;
-      cursor: not-allowed;
-    }
+    &:focus { border-color: #209dd7; }
+    &:disabled { background: #f9fafb; color: #888; cursor: not-allowed; }
   }
 }
 
@@ -240,8 +204,8 @@
   justify-content: flex-end;
 }
 
-.btn-send {
-  background: #209dd7;
+.btn-send,
+.btn-generate {
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -251,38 +215,18 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover:not(:disabled) {
-    background: #1a7db5;
-  }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
 
-  &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
+.btn-send {
+  background: #209dd7;
+  &:hover:not(:disabled) { background: #1a7db5; }
 }
 
 .btn-generate {
   background: #753991;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-
-  &:hover:not(:disabled) {
-    background: #5c2c74;
-  }
-
-  &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
+  &:hover:not(:disabled) { background: #5c2c74; }
 }
-
-/* ── Info / Fields Panel ────────────────────────────── */
 
 .info-panel {
   overflow-y: auto;
@@ -290,9 +234,7 @@
   background: #f8fafc;
 }
 
-.panel-section {
-  padding: 20px 24px;
-}
+.panel-section { padding: 20px 24px; }
 
 .section-label {
   font-size: 11px;
@@ -316,12 +258,7 @@
     color: #374151;
     border-bottom: 1px solid #f0f0f0;
 
-    &::before {
-      content: '›';
-      color: #209dd7;
-      margin-right: 8px;
-      font-weight: 700;
-    }
+    &::before { content: '›'; color: #209dd7; margin-right: 8px; font-weight: 700; }
   }
 }
 
@@ -332,9 +269,7 @@
   line-height: 1.5;
 }
 
-.field-list {
-  margin: 0;
-}
+.field-list { margin: 0; }
 
 .field-row {
   margin-bottom: 10px;
@@ -350,15 +285,8 @@
     margin-bottom: 2px;
   }
 
-  dd {
-    font-size: 13px;
-    color: #032147;
-    margin: 0;
-    word-break: break-word;
-  }
+  dd { font-size: 13px; color: #032147; margin: 0; word-break: break-word; }
 }
-
-/* ── Disclaimer ─────────────────────────────────────── */
 
 .disclaimer-section {
   margin: 0 16px 16px;
@@ -370,28 +298,12 @@
   gap: 10px;
   align-items: flex-start;
 
-  .disclaimer-icon {
-    font-size: 14px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .disclaimer-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
 
-  p {
-    font-size: 12px;
-    color: #92400e;
-    margin: 0;
-    line-height: 1.5;
-  }
+  p { font-size: 12px; color: #92400e; margin: 0; line-height: 1.5; }
 }
 
-/* ── Responsive ─────────────────────────────────────── */
-
 @media (max-width: 768px) {
-  .chat-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .info-panel {
-    display: none;
-  }
+  .chat-layout { grid-template-columns: 1fr; }
+  .info-panel { display: none; }
 }

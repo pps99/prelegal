@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 COPY backend/pyproject.toml ./
-RUN uv pip install --system fastapi "uvicorn[standard]" sqlalchemy python-multipart litellm python-dotenv Markdown
+RUN uv pip install --system fastapi "uvicorn[standard]" sqlalchemy python-multipart litellm python-dotenv Markdown "python-jose[cryptography]" bcrypt
 
 COPY backend/ ./
 COPY templates/ ./templates/
