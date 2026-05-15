@@ -145,4 +145,4 @@ async def generate_document(
 
     rendered_html = render_document(session.document_type, result)
 
-    return {"fields": result, "rendered_html": rendered_html}
+    return {"fields": result, "rendered_html": rendered_html, "doc_type": session.document_type}

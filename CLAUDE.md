@@ -8,7 +8,7 @@ The available documents are covered in the catalog.json file in the project root
 
 @catalog.json
 
-The current implementation has a fake login screen (any credentials accepted) that leads into an AI chat interface for the Mutual NDA. The AI collects all required fields through conversation and generates the final document. Real authentication and document persistence are not yet implemented.
+The current implementation supports real user registration and login with bcrypt password hashing and JWT tokens. Users can chat with AI to draft any of the 11 supported legal document types. Generated documents are automatically saved per-user and accessible from the Documents history page. A draft disclaimer is shown throughout the UI.
 
 ## Development process
 
@@ -31,7 +31,7 @@ Do not use paid models.
 The entire project should be packaged into a Docker container.  
 The backend should be in backend/ and be a uv project, using FastAPI.  
 The frontend should be in frontend/  
-The database uses SQLite and is created from scratch each time the Docker container is brought up. It has a `users` table (email, created_at). Sign-up and sign-in with real password validation are not yet implemented.  
+The database uses SQLite and is created from scratch each time the Docker container is brought up. It has `users` (email, password_hash, created_at), `chat_sessions`, and `documents` (id, user_id, doc_type, title, fields_json, rendered_html, created_at) tables.  
 Consider statically building the frontend and serving it via FastAPI, if that will work.  
 There should be scripts in scripts/ for:  
 ```bash
@@ -76,3 +76,13 @@ Static Angular 18 form for the Mutual NDA only. No backend, no routing, no AI.
 - **Services**: New `ChatService` (`frontend/src/app/services/chat.service.ts`) with `createSession`, `sendMessage`, `generateDocument` methods.
 - **Tests**: 8 pytest backend tests (session creation, message persistence, generate, 404 cases); 72 Angular Karma/Jasmine tests (12 `NdaChatComponent`, 3 `ChatService`, 5 `NdaPageComponent`, others unchanged).
 - **Not yet implemented**: real authentication, multi-document support, document persistence.
+
+### PL-7 — Multiple users & final polish (complete)
+- **Auth**: Real `POST /api/auth/register` and `POST /api/auth/login` with bcrypt password hashing (`passlib[bcrypt]`) and JWT tokens (`python-jose`). Minimum 8-character passwords enforced. Duplicate email returns 409.
+- **JWT middleware**: `get_current_user_email` dependency in `app/auth_utils.py` validates `Authorization: Bearer <token>` on protected endpoints. Angular `authInterceptor` automatically attaches the token to all `/api/` requests.
+- **Document persistence**: New `documents` SQLite table. `POST /api/documents`, `GET /api/documents`, `GET /api/documents/{id}` endpoints scoped to the authenticated user. Documents auto-saved after generation.
+- **Frontend — Signup**: New `SignupComponent` at `/signup` with email, password, confirm-password fields and client-side mismatch validation.
+- **Frontend — Documents page**: New `DocumentsPageComponent` at `/documents` with a dark navy sidebar listing saved docs and a main preview pane. PDF download supported.
+- **Frontend — Polish**: App header in chat panel now shows user initial avatar, "My documents" link, and sign-out button. Login and signup pages share polished card styling with cross-links.
+- **Disclaimer**: Yellow warning banner displayed in chat right-panel, preview toolbar, and documents preview pane: "AI-assisted draft — review by a legal professional required."
+- **Tests**: 6 new pytest tests for auth (`test_auth.py`), 9 new pytest tests for documents (`test_documents.py`); updated Angular specs (29 total) for new dependencies in `NdaChatComponent` and `NdaPageComponent`.

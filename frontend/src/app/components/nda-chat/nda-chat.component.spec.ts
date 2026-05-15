@@ -1,20 +1,43 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterModule } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { NdaChatComponent, DocResult } from './nda-chat.component';
 import { ChatService } from '../../services/chat.service';
+import { DocumentsService } from '../../services/documents.service';
+import { AuthService } from '../../services/auth.service';
+
+const GENERATE_RESPONSE = {
+  rendered_html: '<html>Test</html>',
+  fields: { governingLaw: 'Delaware' },
+  doc_type: 'mutual_nda',
+};
+
+const SAVE_RESPONSE = { id: 42, title: 'Mutual NDA', doc_type: 'mutual_nda', created_at: '2026-01-01' };
 
 describe('NdaChatComponent', () => {
   let chatSpy: jasmine.SpyObj<ChatService>;
+  let docsSpy: jasmine.SpyObj<DocumentsService>;
+  let authSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
     chatSpy = jasmine.createSpyObj('ChatService', ['createSession', 'sendMessage', 'generateDocument']);
     chatSpy.createSession.and.returnValue(of({ session_id: 1, greeting: 'Hello! What document do you need?' }));
     chatSpy.sendMessage.and.returnValue(of({ message: 'Got it! What else?', document_type: null, partial_data: null }));
 
+    docsSpy = jasmine.createSpyObj('DocumentsService', ['save']);
+    docsSpy.save.and.returnValue(of(SAVE_RESPONSE));
+
+    authSpy = jasmine.createSpyObj('AuthService', ['getUserEmail', 'logout']);
+    authSpy.getUserEmail.and.returnValue('user@example.com');
+
     await TestBed.configureTestingModule({
-      imports: [NdaChatComponent, HttpClientTestingModule],
-      providers: [{ provide: ChatService, useValue: chatSpy }],
+      imports: [NdaChatComponent, HttpClientTestingModule, RouterModule.forRoot([])],
+      providers: [
+        { provide: ChatService, useValue: chatSpy },
+        { provide: DocumentsService, useValue: docsSpy },
+        { provide: AuthService, useValue: authSpy },
+      ],
     }).compileComponents();
   });
 
@@ -87,14 +110,30 @@ describe('NdaChatComponent', () => {
     expect(fixture.componentInstance.inputText).toBe('');
   });
 
-  it('should emit formSubmitted with renderedHtml and fields when document generated', () => {
-    chatSpy.generateDocument.and.returnValue(of({ rendered_html: '<html>Test</html>', fields: { governingLaw: 'Delaware' } }));
+  it('should emit formSubmitted with renderedHtml, fields, and docType after saving', () => {
+    chatSpy.generateDocument.and.returnValue(of(GENERATE_RESPONSE));
     const fixture = TestBed.createComponent(NdaChatComponent);
     fixture.detectChanges();
     let emitted: DocResult | undefined;
     fixture.componentInstance.formSubmitted.subscribe((d) => (emitted = d));
     fixture.componentInstance.generateDocument();
-    expect(emitted).toEqual({ renderedHtml: '<html>Test</html>', fields: { governingLaw: 'Delaware' } });
+    expect(docsSpy.save).toHaveBeenCalledWith('mutual_nda', GENERATE_RESPONSE.fields, GENERATE_RESPONSE.rendered_html);
+    expect(emitted?.renderedHtml).toBe('<html>Test</html>');
+    expect(emitted?.fields).toEqual({ governingLaw: 'Delaware' });
+    expect(emitted?.docType).toBe('mutual_nda');
+    expect(emitted?.savedId).toBe(42);
+  });
+
+  it('should still emit formSubmitted even if save fails', () => {
+    chatSpy.generateDocument.and.returnValue(of(GENERATE_RESPONSE));
+    docsSpy.save.and.returnValue(throwError(() => new Error('Save failed')));
+    const fixture = TestBed.createComponent(NdaChatComponent);
+    fixture.detectChanges();
+    let emitted: DocResult | undefined;
+    fixture.componentInstance.formSubmitted.subscribe((d) => (emitted = d));
+    fixture.componentInstance.generateDocument();
+    expect(emitted?.renderedHtml).toBe('<html>Test</html>');
+    expect(emitted?.savedId).toBeUndefined();
   });
 
   it('should set error when generateDocument fails', () => {

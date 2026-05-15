@@ -1,4 +1,4 @@
-.login-container {
+.auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -7,7 +7,7 @@
   padding: 1.5rem;
 }
 
-.login-card {
+.auth-card {
   background: #fff;
   padding: 2.75rem 2.5rem;
   border-radius: 16px;
@@ -65,11 +65,19 @@ h1 {
   margin-bottom: 1.125rem;
 
   label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;
     color: #032147;
     margin-bottom: 0.4rem;
+  }
+
+  .hint {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #888888;
   }
 
   input {
@@ -94,6 +102,13 @@ h1 {
     &::placeholder {
       color: #c9cdd4;
     }
+  }
+
+  .field-error {
+    display: block;
+    font-size: 0.8rem;
+    color: #dc2626;
+    margin-top: 0.3rem;
   }
 }
 

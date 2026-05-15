@@ -10,7 +10,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { ChatService } from '../../services/chat.service';
+import { DocumentsService } from '../../services/documents.service';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -20,12 +23,14 @@ export interface ChatMessage {
 export interface DocResult {
   renderedHtml: string;
   fields: Record<string, any>;
+  docType: string;
+  savedId?: number;
 }
 
 @Component({
   selector: 'app-nda-chat',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './nda-chat.component.html',
   styleUrl: './nda-chat.component.scss',
 })
@@ -43,7 +48,11 @@ export class NdaChatComponent implements OnInit {
   generating = false;
   error: string | null = null;
 
+  readonly userEmail: string;
+
+  private readonly auth = inject(AuthService);
   private readonly chatService = inject(ChatService);
+  private readonly docsService = inject(DocumentsService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly DOC_NAMES: Record<string, string> = {
@@ -59,6 +68,10 @@ export class NdaChatComponent implements OnInit {
     baa: 'Business Associate Agreement',
     ai_addendum: 'AI Addendum',
   };
+
+  constructor() {
+    this.userEmail = this.auth.getUserEmail();
+  }
 
   ngOnInit(): void {
     this.chatService.createSession().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -136,14 +149,36 @@ export class NdaChatComponent implements OnInit {
 
     this.chatService.generateDocument(this.sessionId).subscribe({
       next: (res) => {
-        this.generating = false;
-        this.formSubmitted.emit({ renderedHtml: res.rendered_html, fields: res.fields });
+        const docType = res.doc_type ?? this.documentType ?? '';
+        this.docsService.save(docType, res.fields, res.rendered_html).subscribe({
+          next: (saved) => {
+            this.generating = false;
+            this.formSubmitted.emit({
+              renderedHtml: res.rendered_html,
+              fields: res.fields,
+              docType,
+              savedId: saved.id,
+            });
+          },
+          error: () => {
+            this.generating = false;
+            this.formSubmitted.emit({
+              renderedHtml: res.rendered_html,
+              fields: res.fields,
+              docType,
+            });
+          },
+        });
       },
       error: () => {
         this.error = 'Failed to generate document. Please try again.';
         this.generating = false;
       },
     });
+  }
+
+  logout(): void {
+    this.auth.logout();
   }
 
   private scrollToBottom(): void {

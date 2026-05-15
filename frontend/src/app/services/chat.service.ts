@@ -16,6 +16,7 @@ export interface MessageResponse {
 export interface GenerateResponse {
   fields: Record<string, any>;
   rendered_html: string;
+  doc_type: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
